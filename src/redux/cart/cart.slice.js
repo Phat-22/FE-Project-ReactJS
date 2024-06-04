@@ -15,11 +15,11 @@ export const addToCartThunk = createAsyncThunk(
     async ({ product }, { rejectWithValue }) => {
         try {
             const response = await api.post("carts", { product });
-            const { status } = response.data; //
+            const { status, cartNumber } = response.data; //
             if (status === 401) {
                 throw new Error("Unauthorized");
             }
-            return status;
+            return { status, cartNumber };
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
@@ -88,7 +88,9 @@ const CartSlice = createSlice({
         builder
             .addCase(addToCartThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                state.addCartStatus = action.payload;
+                const {status, cartNumber} = action.payload
+                state.addCartStatus = status;
+                state.cartNumber = cartNumber;
             })
             .addCase(getCartThunk.fulfilled, (state, action) => {
                 state.loading = false;
@@ -107,6 +109,7 @@ const CartSlice = createSlice({
                 state.loading = false;
                 const { productId, quantity } = action.payload;
                 const updatedProductIndex = state.cart.findIndex(product => product.productId === productId);
+                state.cartNumber = state.cart.reduce((acc, product) => acc + product.quantity, 0);
                 if (updatedProductIndex !== -1) {
                     state.cart[updatedProductIndex].quantity = quantity;
                 }
@@ -123,8 +126,7 @@ const CartSlice = createSlice({
             })
             .addCase(cartNumberThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                const { cartNumber } = action.payload
-                console.log(cartNumber);
+                const { cartNumber } = action.payload;
                 state.cartNumber = cartNumber;
             });
     }

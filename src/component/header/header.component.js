@@ -20,16 +20,13 @@ const HeaderComponent = () => {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
-    if(accessToken) {
+    if (accessToken) {
       dispatch(getCurrentUserThunk());
-      dispatch(cartNumberThunk())
-    } 
+      dispatch(cartNumberThunk());
+    }
     dispatch(CategoriesThunk());
   }, [dispatch, cart]);
   
-  
-    
-
   return (
     <div>
       <header className="header">
@@ -130,10 +127,10 @@ const HeaderComponent = () => {
                   </form>
                 </div>
               </div>
-              { isLoggedIn ? <UserComponent user={currentUser} /> : <AccountComponent />}
+              {isLoggedIn ? <UserComponent user={currentUser} /> : <AccountComponent />}
               <li className="heart">
                 <Link to="#" className="bottom__user--a">
-                {" "}
+                  {" "}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
